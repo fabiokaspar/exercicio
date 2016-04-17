@@ -1,30 +1,27 @@
 
 public class Conversor {
-	// hexadecimal para binario
-	// binario para decimal
 	
-	static Integer binToDec (String binary) {
-		Integer dec = Integer.parseInt(binary, 10);
-		//String dec = Integer.toString(v, 10);
+	static String binToDec (String binary) {
+		Integer v = Integer.parseInt(binary, 2);
+		String dec = Integer.toString(v);
 		return dec;
 	}
 	
-	static Integer decToBin (String dec) {
-		Integer bin = Integer.parseInt(dec, 2);
-		//String bin = Integer.toString(v, 2);
+	static String decToBin (String dec) {
+		Integer v = Integer.parseInt(dec, 10);
+		String bin = Integer.toString(v, 2);
 		return bin;
 	}
 	
-	static Integer hexToBin (String hexadec) {
-		Integer bin = Integer.parseInt(hexadec, 2);
-		//String bin = Integer.toString(v, 2);
-		
+	static String hexToBin (String hexadec) {
+		Integer v = Integer.parseInt(hexadec, 16);
+		String bin = Integer.toString(v, 2);
 		return bin;
 	}
 	
-	static Integer binToHex (String binary) {
-		Integer hex = Integer.parseInt(binary, 16);
-		//String hex = Integer.toString(v, 16);
+	static String binToHex (String binary) {
+		Integer v = Integer.parseInt(binary, 2);
+		String hex = Integer.toString(v, 16);
 		return hex;
 	}
 }

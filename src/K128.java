@@ -47,6 +47,7 @@ public class K128 {
 		String v3 = Conversor.hexToBin("AF0");
 		String v4 = Conversor.binToHex("10100000111110011100"); */
 		//System.out.println(v1 + " " + v2 +" "+ v3+" "+ v4);
+		
 	}
 	
 	
