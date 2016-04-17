@@ -1,9 +1,9 @@
 
 public class SBox {
-	 private String S1[];
-	 private String S2[];
-	 private String S3[];
-	 private String S4[];
+	 public String[] S1;
+	 public String[] S2;
+	 public String[] S3;
+	 public String[] S4;
 	 
 	 SBox() {
 		 initS1();
