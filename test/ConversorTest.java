@@ -20,7 +20,21 @@ public class ConversorTest {
 		String v1 = Conversor.hexToBin("AF0");
 		assertTrue("ok", v1.equals("101011110000"));
 	}
+	
+	@Test
+	public void testHexToDec() {
+		String last = Conversor.hexToDec("AF0");
+		long v = 10 * ((long) Math.pow(16, 2)) + 15 * ((long) Math.pow(16, 1));
+		assertEquals(v, Integer.parseInt(last));
+	}
 
+	@Test
+	public void testHexToDec2() {
+		long last = Conversor.hexToDec2("AF09");
+		long v = 10 * (16 * 16 * 16) + 15 * 16 * 16 + 9;
+		assertEquals(v, last);
+	}
+	
 	@Test
 	public void testBinToHex() {
 		String v1 = Conversor.binToHex("111110100110");

@@ -2,7 +2,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class SBoxTest {
-
 	@Test
 	public void testGetElementFromS1() {
 		SBox sb = new SBox();

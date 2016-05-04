@@ -1,65 +1,72 @@
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
 public class K128 {
-	public static void main (String args[]) {
-		try {
-			leArq(args[0]);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	SubChave skey;
+	OperadorBinario sq; 
+	Function func;
+	String xbin;
+	
+	public K128 (String senha) {
+		String key = converteParaBinario(senha);
+		System.out.println("senha = "+senha);
+		skey = new SubChave(key);
+		func = skey.ch.func;
+		sq = new OperadorBinario();
+	}
+	
+	public String converteParaBinario (String seq) {
+		String seqBin = "", v;
+		int valor;
+		OperadorBinario sq = new OperadorBinario();
+		
+		for (int i = 0; i < seq.length(); i++) {
+			valor = seq.charAt(i);
+			v = Integer.toString(valor, 2);
+			v = sq.completaComZero(v, 8);
+			seqBin = seqBin.concat(v);
 		}
+		
+		return seqBin;
 	}
 	
-	static void leArq(String fname) throws IOException {
-		int index;
-		byte[] legivel = new byte[16];
-		int nbytes;
-		FileInputStream entrada = new FileInputStream(fname);
+	public String roundCripto (int round, String x) {
+		String y, C, B, D, A, op;
+		String[] seg = sq.separaBits(x,4); 
 		
-		while (true) {
-			index = 0;
-			do {
-				nbytes = entrada.read(legivel, index, 1);
-				if (nbytes != -1) {
-					System.out.print((char)legivel[index]+" ");
-					index = index+1;
-				}	
-				else break;
-			} while (index < 16);
+		D = seg[3];
+		C = seg[2];
+		op = func.F2(D, skey.KR5[round][0], skey.KM32[round][0]);
+		C = sq.xor(C, op);
 		
-			System.out.println();
-			
-			if (nbytes == -1)
-				break;
+		B = seg[1];
+		op = func.F1(C, skey.KR5[round][1], skey.KM32[round][1]);
+		B = sq.xor(B, op);
+		
+		A = seg[0];
+		op = func.F3(B, skey.KR5[round][2], skey.KM32[round][2]);
+		A = sq.xor(A, op);
+		
+		op = func.F2(A, skey.KR5[round][3], skey.KM32[round][3]);
+		D = sq.xor(D, op);
+		
+		y = C+B+A+D;
+		return y;
+	}
+	
+	public String algoritmoK128 (String blocoX) {
+		String y;
+		
+		y = converteParaBinario(blocoX);
+		this.xbin = String.valueOf(y);
+		
+		for (int i = 0; i <= 11; i++) {
+			y = roundCripto(i, y);
 		}
-		entrada.close();
-	}
-	
-	static void teste() {
-		/*String v1 = Conversor.binToDec("0111");
-		String v2 = Conversor.decToBin("255");
-		String v3 = Conversor.hexToBin("AF0");
-		String v4 = Conversor.binToHex("10100000111110011100"); */
-		//System.out.println(v1 + " " + v2 +" "+ v3+" "+ v4);
 		
+		return y;
 	}
 	
-	
-	public static byte[] readFile(String fileName) throws IOException {
-        Path filePath = Paths.get(fileName);
-        return Files.readAllBytes(filePath);
-    }
-	
-	public static void writeFile(String fileName, byte[] fileBytes) throws IOException {
-        Path filePath = Paths.get(fileName);
-        Files.write(filePath, fileBytes);
-    }
+	public void setOtherKey (String senha) {
+		String key = converteParaBinario(senha);
+		skey = new SubChave(key);
+		func = skey.ch.func;
+	}
 }
-
-
