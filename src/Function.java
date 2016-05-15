@@ -3,69 +3,63 @@ public class Function {
 	SBox sb = new SBox();
 	Constants cts = new Constants();
 	
-	public String[] divideParticao (String x, String KR5, String KM32) {
-		String i;
-		String[] partes;
+	public int[] indicesCelulasSBox (Long x, Long KR5, Long KM32) {
+		Long I;
+		int[] indices;
 		
-		if (KR5.length() != 5 || KM32.length() != 32)
-			System.exit(0);
+		long N = Long.valueOf(KR5);
 		
-		int N = Integer.valueOf(KR5, 2);
+		I = sq.xor(x, KM32);
+		I = sq.rotacionaEsquerda(I, (int) N);
 		
-		i = sq.xor(x, KM32);
-		i = sq.rotacionaEsquerda(i, N);
-		partes = sq.separaBits(i,4);
+		indices = sq.extratorDeBytes(I);
 		
-		return partes;
+		return indices;
 	}
 	
-	public String[] listaCelulasBinarias (String[] particao) {
-		String celBin[] = new String[4];
-		long i1 = Integer.parseInt(Conversor.binToDec(particao[0]));
-		long i2 = Integer.parseInt(Conversor.binToDec(particao[1]));
-		long i3 = Integer.parseInt(Conversor.binToDec(particao[2]));
-		long i4 = Integer.parseInt(Conversor.binToDec(particao[3]));
+	public Long[] celulasSBox (int[] indices) {
+		Long celulas[] = new Long[4];
 		
-		celBin[0] = sq.completaComZero(Conversor.hexToBin(sb.S1[(int)i1]), 32);
-		celBin[1] = sq.completaComZero(Conversor.hexToBin(sb.S2[(int)i2]), 32);
-		celBin[2] = sq.completaComZero(Conversor.hexToBin(sb.S3[(int)i3]), 32);
-		celBin[3] = sq.completaComZero(Conversor.hexToBin(sb.S4[(int)i4]), 32);
+		celulas[0] = Long.valueOf(sb.S1[indices[0]], 16);
+		celulas[1] = Long.valueOf(sb.S2[indices[1]], 16);
+		celulas[2] = Long.valueOf(sb.S3[indices[2]], 16);
+		celulas[3] = Long.valueOf(sb.S4[indices[3]], 16);
 		
-		return celBin;
+		return celulas;
 	}
 	
-	public String F1 (String x, String KR5, String KM32) {
-		String[] celBin;
-		String y;
-		celBin = listaCelulasBinarias(divideParticao(x, KR5, KM32));
+	public Long F1 (Long x, Long KR5, Long KM32) {
+		Long[] cel;
+		Long y;
+		cel = celulasSBox(indicesCelulasSBox(x, KR5, KM32));
 		
-		y = sq.somaMod32(celBin[0], celBin[1]);
-		y = sq.subMod32(y, celBin[2]);
-		y = sq.xor(y, celBin[3]);
+		y = sq.somaMod32(cel[0], cel[1]);
+		y = sq.subMod32(y, cel[2]);
+		y = sq.xor(y, cel[3]);
 		
 		return y;
 	}
 	
-	public String F2 (String x, String KR5, String KM32) {
-		String[] celBin;
-		String y;
-		celBin = listaCelulasBinarias(divideParticao(x, KR5, KM32));
+	public Long F2 (Long x, Long KR5, Long KM32) {
+		Long[] cel;
+		Long y;
+		cel = celulasSBox(indicesCelulasSBox(x, KR5, KM32));
 		
-		y = sq.subMod32(celBin[0], celBin[1]);
-		y = sq.xor(y, celBin[2]);
-		y = sq.somaMod32(y, celBin[3]);
+		y = sq.subMod32(cel[0], cel[1]);
+		y = sq.xor(y, cel[2]);
+		y = sq.somaMod32(y, cel[3]);
 		
 		return y;
 	}
 	
-	public String F3 (String x, String KR5, String KM32) {
-		String[] celBin;
-		String y;
-		celBin = listaCelulasBinarias(divideParticao(x, KR5, KM32));
+	public Long F3 (Long x, Long KR5, Long KM32) {
+		Long[] cel;
+		Long y;
+		cel = celulasSBox(indicesCelulasSBox(x, KR5, KM32));
 		
-		y = sq.xor(celBin[0], celBin[1]);
-		y = sq.somaMod32(y, celBin[2]);
-		y = sq.subMod32(y, celBin[3]);
+		y = sq.xor(cel[0], cel[1]);
+		y = sq.somaMod32(y, cel[2]);
+		y = sq.subMod32(y, cel[3]);
 		
 		return y;
 	}

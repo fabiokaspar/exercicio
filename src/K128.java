@@ -1,35 +1,19 @@
 public class K128 {
 	SubChave skey;
-	OperadorBinario sq; 
+	OperadorBinario sq = new OperadorBinario(); 
 	Function func;
-	String xbin;
+	Bloco xbin;
+	Bloco k;
+	String senha;
 	
 	public K128 (String senha) {
-		String key = converteParaBinario(senha);
-		System.out.println("senha = "+senha);
-		skey = new SubChave(key);
-		func = skey.ch.func;
-		sq = new OperadorBinario();
+		setKey(senha);
 	}
-	
-	public String converteParaBinario (String seq) {
-		String seqBin = "", v;
-		int valor;
-		OperadorBinario sq = new OperadorBinario();
-		
-		for (int i = 0; i < seq.length(); i++) {
-			valor = seq.charAt(i);
-			v = Integer.toString(valor, 2);
-			v = sq.completaComZero(v, 8);
-			seqBin = seqBin.concat(v);
-		}
-		
-		return seqBin;
-	}
-	
-	public String roundCripto (int round, String x) {
-		String y, C, B, D, A, op;
-		String[] seg = sq.separaBits(x,4); 
+	 
+	public Bloco roundCripto (int round, Bloco x) {
+		Long C, B, D, A, op;
+		Long[] seg = sq.separaBloco(x); 
+		Bloco y;
 		
 		D = seg[3];
 		C = seg[2];
@@ -47,26 +31,27 @@ public class K128 {
 		op = func.F2(A, skey.KR5[round][3], skey.KM32[round][3]);
 		D = sq.xor(D, op);
 		
-		y = C+B+A+D;
+		y = sq.concatenaBloco(C, B, A, D);
+
 		return y;
 	}
 	
-	public String algoritmoK128 (String blocoX) {
-		String y;
+	public Bloco algoritmoK128 (String legivel) {
+		Bloco y = new Bloco(legivel);
 		
-		y = converteParaBinario(blocoX);
-		this.xbin = String.valueOf(y);
+		xbin = new Bloco(y.bloco);
 		
-		for (int i = 0; i <= 11; i++) {
+		for (int i = 0; i <= 0; i++) {
 			y = roundCripto(i, y);
 		}
 		
 		return y;
 	}
 	
-	public void setOtherKey (String senha) {
-		String key = converteParaBinario(senha);
-		skey = new SubChave(key);
-		func = skey.ch.func;
+	public void setKey (String senha) {
+		this.senha = senha;
+		this.k = new Bloco(senha);
+		this.skey = new SubChave(k);
+		this.func = skey.ch.func;
 	}
 }

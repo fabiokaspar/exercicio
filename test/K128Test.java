@@ -4,34 +4,26 @@ import org.junit.Test;
 
 
 public class K128Test {
-	
-	@Test
-	public void testK128() {
-		String k = "aaaaaabbbb1qazxs";
-		K128 alg = new K128(k);
-		assertNotNull("não null!", alg.skey);
-	}
-	
+		
 	@Test
 	public void testAlgoritmoK128() {
-		String senha = "aaaaaabbbb1qazxs";
+		String senha = "mac0336mac0336ma";
 		K128 alg = new K128(senha);
-		String y = alg.algoritmoK128("abcdefghabcdefgh");
-		assertEquals(128, y.length());
-		System.out.println("x = "+alg.xbin);
-		System.out.println("y = "+y);
-		//alg.setOtherKey("!@#qawertyKhJYtg");
-		//y = alg.algoritmoK128("abcdefghabcdefgh");
-		//assertEquals(128, y.length());
-		//System.out.println("\nx = "+alg.xbin);
-		//System.out.println("y = "+y);
-	
-		//alg.setOtherKey("1234566543210987");
-		//y = alg.algoritmoK128("abcdefghabcdefgh");
-		//assertEquals(128, y.length());
-		//System.out.println("\nx = "+alg.xbin);
-		//System.out.println("y = "+y);
 		
+		System.out.println("k = "
+		+Long.toHexString(alg.k.bloco[0])+ " "+ Long.toHexString(alg.k.bloco[1]) + " " + Long.toHexString(alg.k.bloco[2]) + " "+ Long.toHexString(alg.k.bloco[3]));
+		
+		
+		for (int i = 0; i < 12; i++) {
+			Long[] bl = alg.skey.ch.ki[i].bloco;
+			System.out.print("KEYS[" +i+ "] = ");
+			
+			for (int j = 0; j < 4; j++) {
+				System.out.print(Long.toHexString(bl[j]) +" ");
+			}
+			
+			System.out.println();
+		}
 	}
 	
 }

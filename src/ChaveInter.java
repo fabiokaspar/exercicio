@@ -1,33 +1,29 @@
 public class ChaveInter {
-	String k0;
-	String[] ki;
+	Bloco[] ki = new Bloco[12];
 	Function func = new Function();
 	Constants cts = func.cts;
 	OperadorBinario sq = new OperadorBinario();
 	
-	ChaveInter (String k) {
-		this.ki = new String[12];
+	ChaveInter (Bloco k) {
+		Long ctaux;
+		ctaux = Long.valueOf("5a827999", 16);
+		Bloco ct = sq.concatenaBloco(0L, 0L, 0L, ctaux); // mudei
 		
-		String v;
-		v = Conversor.hexToBin("5a827999");
-		v = sq.completaComZero(v, 128);
-		
-		k0 = sq.xor(v, k);
+		ki[0] = sq.xor2(ct, k);
 		geraTabelaChavesInter();
 	}
 	
 	public void geraTabelaChavesInter () {
-		ki[0] = k0;
-		
 		for (int i = 0; i <= 10; i++) {
-			ki[i+1] = geraChaveIteracao(ki[i], i);
+			ki[i+1] = geraChaveIteracao(ki[i], i+1);
 		}
 	}
 	
-	public String geraChaveIteracao (String ki, int itAtual) {
-		String nextKey;
-		String D, C, B, A;
-		String[] seg = sq.separaBits(ki, 4);
+	public Bloco geraChaveIteracao (Bloco ki, int itAtual) {
+		Bloco nextKey;
+		Long D, C, B, A;
+		
+		Long[] seg = sq.separaBloco(ki);
 		
 		A = seg[0];
 		D = seg[3];
@@ -41,33 +37,28 @@ public class ChaveInter {
 		
 		A = calculaSegmentoA(itAtual, B, A);
 		
-		nextKey = D+C+B+A;
+		nextKey = sq.concatenaBloco(D, C, B, A);
+		
 		return nextKey;
 	}
 	
-	public String calculaSegmentoD (int itAtual, String arg_func, String op_xor) {
-		String D, cr, cm, op;
+	public Long calculaSegmentoD (int itAtual, Long arg_func, Long op_xor) {
+		Long D, cr, cm, op;
 		
-		cr = Long.toBinaryString(cts.ConstR[itAtual][0]);
-		cm = Long.toBinaryString(cts.ConstM[itAtual][0]);
-		
-		cr = sq.completaComZero(cr, 5);
-		cm = sq.completaComZero(cm, 32);
-		
+		cr = cts.ConstR[itAtual][0];
+		cm = cts.ConstM[itAtual][0];
+			
 		op = func.F2(arg_func, cr, cm);  // f2, A 
 		D = sq.xor(op_xor, op);		// D
 		
 		return D;
 	}
 	
-	public String calculaSegmentoC (int itAtual, String arg_func, String op_xor) {
-		String C, cr, cm, op;
+	public Long calculaSegmentoC (int itAtual, Long arg_func, Long op_xor) {
+		Long C, cr, cm, op;
 		
-		cr = Long.toBinaryString(cts.ConstR[itAtual][1]);
-		cm = Long.toBinaryString(cts.ConstM[itAtual][1]);
-		
-		cr = sq.completaComZero(cr, 5);
-		cm = sq.completaComZero(cm, 32);
+		cr = cts.ConstR[itAtual][1];
+		cm = cts.ConstM[itAtual][1];
 		
 		op = func.F1(arg_func, cr, cm);  // f1, D
 		C = sq.xor(op_xor, op);  // C
@@ -75,14 +66,11 @@ public class ChaveInter {
 		return C;
 	}
 	
-	public String calculaSegmentoB (int itAtual, String arg_func, String op_xor) {
-		String B, cr, cm, op;
+	public Long calculaSegmentoB (int itAtual, Long arg_func, Long op_xor) {
+		Long B, cr, cm, op;
 		
-		cr = Long.toBinaryString(cts.ConstR[itAtual][2]);
-		cm = Long.toBinaryString(cts.ConstM[itAtual][2]);
-		
-		cr = sq.completaComZero(cr, 5);
-		cm = sq.completaComZero(cm, 32);
+		cr = cts.ConstR[itAtual][2];
+		cm = cts.ConstM[itAtual][2];
 		
 		op = func.F3(arg_func, cr, cm);  // f3, C 
 		B = sq.xor(op_xor, op);  // B
@@ -90,14 +78,11 @@ public class ChaveInter {
 		return B;
 	}
 
-	public String calculaSegmentoA (int itAtual, String arg_func, String op_xor) {
-		String A, cr, cm, op;
+	public Long calculaSegmentoA (int itAtual, Long arg_func, Long op_xor) {
+		Long A, cr, cm, op;
 		
-		cr = Long.toBinaryString(cts.ConstR[itAtual][3]);
-		cm = Long.toBinaryString(cts.ConstM[itAtual][3]);
-		
-		cr = sq.completaComZero(cr, 5);
-		cm = sq.completaComZero(cm, 32);
+		cr = cts.ConstR[itAtual][3];
+		cm = cts.ConstM[itAtual][3];
 		
 		op = func.F2(arg_func, cr, cm);  // f2, B 
 		A = sq.xor(op_xor, op);  // A 

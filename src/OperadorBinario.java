@@ -1,89 +1,69 @@
-
 public class OperadorBinario {
-	public String xor (String bin1, String bin2) {
-		int n = bin1.length();
-		int val1, val2, res;
-		String resp = "";
+	long pot = (long) Math.pow(2, 32);
+	
+	public Long xor (Long op1, Long op2) {
+		Long resp;
+		 
+		resp = op1.longValue() ^ op2.longValue();
 		
-		for (int i = 0; i < n; i++) {
-			val1 = bin1.charAt(i);
-			val2 = bin2.charAt(i);
-			res = val1 ^ val2;
-			resp = resp.concat(String.valueOf(res));
-		}
 		return resp;
 	}
 	
-	public int comprimentoBinario (String seq) {
-		return seq.length();
-	}
-	
-	public String rotacionaEsquerda (String seq, int off) {
-		int n = seq.length();
-		off = off % n;
-		String last;
-		String sufixo = seq.substring(0, off);
-		last = seq.substring(off, n);
-		last = last.concat(sufixo);
-		return last;
-	}
-	
-	public String cincoBitsDaDireita (String str) {
-		String res;
+	public Bloco xor2 (Bloco op1, Bloco op2) {
+		Bloco resp = new Bloco();
 		
-		int n = str.length();
-		res = str.substring(n-5, n);
-		
-		return res;
-	}
-	
-	public String[] separaBits (String seq, int numIntervalos) {
-		String res[] = new String[numIntervalos];
-		int n = seq.length();
-		int offset = n/numIntervalos;
-		int j = 0;
-		
-		for (int i = 0; i+offset <= n; i += offset) {
-			res[j++] = seq.substring(i, i+offset);
-		}	
-		return res;
-	}
-	
-	public String concatenaBits (String segs[]) {
-		String res = String.valueOf(segs[0]);
-		
-		for (int i = 1; i <= 3; i++) {
-			res = res.concat(segs[i]);
+		for (int i = 0; i < 4; i++) {
+			resp.bloco[i] = 0L;
+			resp.bloco[i] = (op1.bloco[i].longValue() ^ op2.bloco[i].longValue());
 		}
 		
+		return resp;
+	}
+	
+	public Long rotacionaEsquerda (Long op, int off) {
+		String seq = Long.toBinaryString(op);
+		seq = completaComZero(seq, 32);
+		
+		String last;
+		String sufixo = seq.substring(0, off);
+		
+		last = seq.substring(off, 32);
+		last = last.concat(sufixo);
+		
+		Long res = Long.valueOf(last, 2);
+		
 		return res;
 	}
 	
-	public String somaMod32 (String bin1, String bin2) {
-		long dec1 = Long.parseLong(Conversor.binToDec(bin1));
-		long dec2 = Long.parseLong(Conversor.binToDec(bin2));
-		long soma = (dec1+dec2) % ((long) Math.pow(2, 32));
-				
-		String res = Conversor.decToBin(String.valueOf(soma));
-		res = completaComZero(res, 32);
+	public Long cincoBitsDaDireita (Long op) {
+		Long res;
+		String saux;
+		int n;
 		
-		return res;
+		saux = Long.toBinaryString(op);
+		n = saux.length();
+		saux = saux.substring(n-5, n);
+		res = Long.valueOf(saux, 2); 
+		
+		return res;		
 	}
 	
-	public String subMod32 (String bin1, String bin2) {
-		long dec1 = Long.parseLong(Conversor.binToDec(bin1));
-		long dec2 = Long.parseLong(Conversor.binToDec(bin2));
-		long sub = dec1-dec2;
-		long size = ((long) Math.pow(2, 32)); 
+	public Long[] separaBloco (Bloco op) {	
+		return op.bloco;
+	}
+	
+	public int[] extratorDeBytes (Long op) {
+		String saux = Long.toBinaryString(op);
+		saux = completaComZero(saux, 32);
 		
-		if (sub < 0) sub += size;
+		int[] bytes = new int[4];
+		int j = 0;
 		
-		sub %=  size;
-				
-		String res = Conversor.decToBin(String.valueOf(sub));
-		res = completaComZero(res, 32);
+		for (int i = 0; i < 4; i++) {
+			bytes[j++] = (int)Integer.valueOf(saux.substring(i * 8, (i+1) * 8), 2);
+		}
 		
-		return res;
+		return bytes;
 	}
 	
 	public String completaComZero (String seq, int total) {
@@ -95,6 +75,36 @@ public class OperadorBinario {
 		for (int i = 1; i <= dif; i++) {
 			last = zero + last;
 		}
+		
 		return last;
+	}
+	
+	public Bloco concatenaBloco (Long op1, Long op2, Long op3, Long op4) {
+		Bloco blc = new Bloco();
+		
+		blc.bloco[0] = op1;
+		blc.bloco[1] = op2;
+		blc.bloco[2] = op3;
+		blc.bloco[3] = op4;
+		
+		return blc;
+	}
+	
+	public Long somaMod32 (Long op1, Long op2) {
+		long soma = (op1.longValue() + op2.longValue()) % pot;
+				
+		return soma;
+	}
+	
+	public Long subMod32 (Long op1, Long op2) {
+		long sub = (op1.longValue()-op2.longValue());
+		
+		if (sub < 0) 
+			sub += pot;
+		
+		if (sub >= pot)
+			sub = sub % pot;
+		
+		return sub;
 	}
 }
