@@ -47,5 +47,12 @@ public class Bloco {
 			saux = saux.substring(32 * i, 32 * (i+1));
 			bloco[i] = Long.valueOf(saux);
 		}
-	}	
+	}
+	
+	public void imprimeBloco () {
+		for (int i = 0; i < 4; i++) {
+			System.out.print(Long.toHexString(bloco[i]) +" ");
+		}
+		System.out.println();
+	}
 }

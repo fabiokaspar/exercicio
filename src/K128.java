@@ -2,7 +2,6 @@ public class K128 {
 	SubChave skey;
 	OperadorBinario sq = new OperadorBinario(); 
 	Function func;
-	Bloco xbin;
 	Bloco k;
 	String senha;
 	
@@ -36,10 +35,8 @@ public class K128 {
 		return y;
 	}
 	
-	public Bloco algoritmoK128 (String legivel) {
-		Bloco y = new Bloco(legivel);
-		
-		xbin = new Bloco(y.bloco);
+	public Bloco algoritmoK128 (Bloco x) {
+		Bloco y = new Bloco(x.bloco);
 		
 		for (int i = 0; i <= 0; i++) {
 			y = roundCripto(i, y);
