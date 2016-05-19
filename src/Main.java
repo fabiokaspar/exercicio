@@ -11,7 +11,7 @@ public class Main {
 		senha = "ABCqwe4122kQasSS";
 		//k = calculaChaveK(senha);
 		alg = new K128(k);
-		alg.algoritmoK128("qawsedrftgyh1298");	
+		//alg.algoritmoK128("qawsedrftgyh1298");	
 	}
 	
 	void leArq(String fname) throws IOException {
