@@ -6,24 +6,19 @@ import org.junit.Test;
 public class K128Test {
 	OperadorBinario sq = new OperadorBinario();
 	
+	//@Test
 	public void testAlgoritmoK128() {
-		String senha = "mac0336mac0336ma";
+		String senha = "senhamalucasenha";
 		K128 alg = new K128(senha);
 		
 		System.out.println("k = ");
 		alg.k.imprimeBloco();
 		
 		for (int i = 0; i < 12; i++) {
-			Long[] bl = alg.skey.ch.ki[i].bloco;
-			System.out.print("KEYS[" +i+ "] = ");
-			
-			for (int j = 0; j < 4; j++) {
-				System.out.print(Long.toHexString(bl[j]) +" ");
-			}
-			
-			System.out.println();
-		} 
-		
+			Bloco bl = alg.skey.ch.ki[i];
+			System.out.print("KEYS[" +i+ "] = ");	
+			bl.imprimeBloco();
+		}	
 	}
 	
 	public void testFinalCripto () {
@@ -70,9 +65,10 @@ public class K128Test {
 		 * 
 		 */
 		
-		//String senha = "senhamalucasenha";
-		String senha = "mac0336mac0336ma";
+		String senha = "senhaM41Ucasenha";
+		//String senha = "mac0336MA";
 		K128 alg = new K128(senha);
+
 		
 		//Bloco acima XOR 0xFFFFFFff :      76696d20    3e20656d    6163730a    f000000c
 		Long[] t = new Long[4];
@@ -82,14 +78,7 @@ public class K128Test {
 		t[3] = Long.valueOf("f000000c", 16);
 		Bloco x = new Bloco(t);
 		
-		Long[] FF = new Long[4];
-		FF[0] = Long.valueOf("ffffffff", 16);
-		FF[1] = Long.valueOf("ffffffff", 16);
-		FF[2] = Long.valueOf("ffffffff", 16);
-		FF[3] = Long.valueOf("0fffffff", 16);
-		Bloco z1 = new Bloco(FF);
-		
-		Bloco xf = sq.xor2(x, z1);
+		Bloco xf = sq.xor2(x, alg.ff);
 		
 		System.out.print("xf = ");
 		xf.imprimeBloco();

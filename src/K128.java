@@ -4,8 +4,15 @@ public class K128 {
 	Function func;
 	Bloco k;
 	String senha;
+	Bloco ff;
 	
 	public K128 (String senha) {
+		Long[] z1 = new Long[4];
+		z1[0] = Long.valueOf("ffffffff", 16);
+		z1[1] = Long.valueOf("ffffffff", 16);
+		z1[2] = Long.valueOf("ffffffff", 16);
+		z1[3] = Long.valueOf("0fffffff", 16);
+		ff = new Bloco(z1);
 		setKey(senha);
 	}
 	 
@@ -85,7 +92,7 @@ public class K128 {
 	
 	public Bloco algoritmoK128Round0 (Bloco x) {
 		Bloco y = new Bloco(x.bloco);
-	
+		
 		y = roundCripto(0, y);
 		
 		return y;
