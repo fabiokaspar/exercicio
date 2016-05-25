@@ -19,29 +19,11 @@ public class BlocoTest {
 		
 		byte[] v1 = Bloco.converteBlocoEmBuffer(bc);
 		
-		//System.out.println("bc = ");
-		//bc.imprimeBloco();
-		
-		//bc.imprimeBlocoEmBinario();
-		
 		Bloco bc2 = Bloco.converteBufferEmBloco(v1);
+				
+		byte[] v2 = Bloco.converteBlocoEmBuffer(bc2);
 		
-		//System.out.println("bc2 = ");
-		//bc2.imprimeBloco();
-		//bc2.imprimeBlocoEmBinario();
-		
-		//byte[] v2 = Bloco.converteBlocoEmBuffer(bc2);
-		
-		//assertArrayEquals(v1, v2);
-		
-		/*System.out.print("v1 = ");
-		for (int i = 0; i < 16; i++)
-			System.out.print(v1[i]+ " ");
-		
-		System.out.println();
-		System.out.print("v2 = ");
-		for (int i = 0; i < 16; i++)
-			System.out.print(v2[i]+ " "); */
+		assertArrayEquals(v1, v2);
 	}
 
 	//@Test

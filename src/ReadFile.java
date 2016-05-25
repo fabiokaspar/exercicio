@@ -15,13 +15,18 @@ public class ReadFile {
 	/***************************** CRIPTOGRAFIA EM CBC ****************************************/
 	
 	public void criptaArquivoEmCBC (String fnameInput, String fnameOutput) {
+		Bloco x, z;
 		byte[] leg = new byte[16];
+		
+		boolean leuBloco = false;
 		int num_bytesLidos = 0;
-		Bloco x;
 		
 		FileInputStream entrada = null;
 		FileOutputStream saida = null;
 		
+		Bloco y = null;
+		Bloco y_ant = new Bloco();
+				
 		try {
 			entrada = new FileInputStream(fnameInput);
 			saida =  new FileOutputStream(fnameOutput);
@@ -39,8 +44,17 @@ public class ReadFile {
 					x = Bloco.completaBloco(leg, num_bytesLidos);
 				}
 				
-				Bloco y = alg.algoritmoK128(x);
+				if (leuBloco == false) {
+					z = op.xor2(x, alg.ff);
+					leuBloco = true;
+				}
+				else {
+					z = op.xor2(x, y_ant);
+				}
 				
+				y = alg.algoritmoK128(z);
+				y_ant.alteraBlocoAtual(y);
+								
 				byte[] cifra = Bloco.converteBlocoEmBuffer(y);
 				
 				escreveNaSaida(saida, cifra, 16);
@@ -50,12 +64,8 @@ public class ReadFile {
 		}
 		
 		System.out.println("Criptografia: olhar arquivos de entrada e saida!");
-		
-		try {
-			entrada.close();
-			saida.close();
-		} catch (IOException e) { e.printStackTrace(); }
-	
+			
+		fechaArquivos(entrada, saida);
 	}
 	
 	/***************************** DECRIPTOGRAFIA EM CBC ****************************************/
@@ -63,7 +73,9 @@ public class ReadFile {
 	public void decriptaArquivoEmCBC (String fnameInput, String fnameOutput) {
 		byte[] cifra = new byte[16];
 		int num_bytesLidos = 0;
+		Bloco x, y, z, y_ant = new Bloco();
 		
+		boolean leuBloco = false;
 		FileInputStream entrada = null;
 		FileOutputStream saida = null;
 		
@@ -77,9 +89,18 @@ public class ReadFile {
 			
 			if (num_bytesLidos == 16)
 			{
-				Bloco y = Bloco.converteBufferEmBloco(cifra);
+				y = Bloco.converteBufferEmBloco(cifra);
+				z = alg.algoritmoK128Inverso(y);
 				
-				Bloco x = alg.algoritmoK128Inverso(y);
+				if (leuBloco == false) {
+					x = op.xor2(z, alg.ff);
+					leuBloco = true;
+				}
+				else {
+					x = op.xor2(z, y_ant);
+				}
+				
+				y_ant.alteraBlocoAtual(y);	
 				
 				byte[] leg = Bloco.converteBlocoEmBuffer(x);
 				
@@ -90,16 +111,11 @@ public class ReadFile {
 		}
 		
 		System.out.println("Decriptografia: olhar arquivos de entrada e saida!");
-		
-		try {
-			entrada.close();
-			saida.close();
-		} catch (IOException e) { e.printStackTrace(); }
-		
-		//fechaArquivos(entrada, saida);
+				
+		fechaArquivos(entrada, saida);
 	}
 	
-	/**************** OPERAÇÕES COM ARQUIVOS *******************/
+	/**************************** OPERAÇÕES COM ARQUIVOS ******************************/
 	
 	public void escreveNaSaida (FileOutputStream saida, byte[] buffer, int qtdbytes) {
 		try {					

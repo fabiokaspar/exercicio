@@ -49,10 +49,10 @@ public class Bloco {
 			s = calcula4BytesDecimais((short)chain[i], (short)chain[i+1],
 					(short)chain[i+2], (short)chain[i+3]);
 			
-			System.out.println(s);
 			resp.bloco[j++] = Long.valueOf(s, 2);
 			
-			System.out.println(Long.toHexString(resp.bloco[j-1]));
+			//System.out.println(s);
+			//System.out.println(Long.toHexString(resp.bloco[j-1]));
 		}
 		
 		return resp;
@@ -150,5 +150,11 @@ public class Bloco {
 		s += saux.substring(n-8, n);
 		
 		return s;
+	}
+	
+	public void alteraBlocoAtual (Bloco novo) {
+		for (int i = 0; i < 4; i++) {
+			this.bloco[i] = Long.valueOf(novo.bloco[i].longValue());
+		}
 	}
 }
