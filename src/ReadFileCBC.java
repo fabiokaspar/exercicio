@@ -2,28 +2,29 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
-
-public class ReadFile {
+public class ReadFileCBC {
 	K128 alg;
 	OperadorBinario op = new OperadorBinario();
 	
-	ReadFile (K128 alg) {
+	ReadFileCBC (K128 alg) {
 		this.alg = alg;
 	}
 	
 	/***************************** CRIPTOGRAFIA EM CBC ****************************************/
 	
-	public void criptaArquivoEmCBC (String fnameInput, String fnameOutput) {
-		Bloco x, z;
-		byte[] leg = new byte[16];
-		
+	public ArrayList<Bloco> criptaArquivoEmCBC (String fnameInput, String fnameOutput, ArrayList<Bloco> vetEntra) {
+		long numbytes = 0;
 		boolean leuBloco = false;
 		int num_bytesLidos = 0;
 		
+		byte[] leg = new byte[16];
+		ArrayList<Bloco> vetSai = new ArrayList<Bloco>();
 		FileInputStream entrada = null;
 		FileOutputStream saida = null;
 		
+		Bloco x, z;
 		Bloco y = null;
 		Bloco y_ant = new Bloco();
 				
@@ -39,9 +40,11 @@ public class ReadFile {
 			{
 				if (num_bytesLidos == 16) {
 					x = Bloco.converteBufferEmBloco(leg);
+					numbytes++;
 				}
 				else { 
-					x = Bloco.completaBloco(leg, num_bytesLidos);
+					numbytes = numbytes * 16 + num_bytesLidos;
+					x = Bloco.completaBloco(leg, num_bytesLidos, numbytes);
 				}
 				
 				if (leuBloco == false) {
@@ -52,8 +55,13 @@ public class ReadFile {
 					z = op.xor2(x, y_ant);
 				}
 				
+				if (vetEntra != null)
+					vetEntra.add(x);
+				
 				y = alg.algoritmoK128(z);
 				y_ant.alteraBlocoAtual(y);
+				
+				vetSai.add(y);
 								
 				byte[] cifra = Bloco.converteBlocoEmBuffer(y);
 				
@@ -63,9 +71,10 @@ public class ReadFile {
 			else break;
 		}
 		
-		System.out.println("Criptografia: olhar arquivos de entrada e saida!");
-			
+		System.out.println("Criptografia: olhar arquivos de entrada e saida!");	
 		fechaArquivos(entrada, saida);
+		
+		return vetSai;
 	}
 	
 	/***************************** DECRIPTOGRAFIA EM CBC ****************************************/

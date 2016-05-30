@@ -10,9 +10,12 @@ public class Bloco {
 	}
 	
 	Bloco (Long[] novoBloco) { 
-		bloco = novoBloco;
+		for (int i = 0; i < 4; i++) {
+			bloco[i] = novoBloco[i];
+		}
 	}
 	
+	// texto ASCII de 128 caracteres (i.e. 128 bytes) 
 	Bloco (String texto) {
 		String txtBinario = converteParaBinario(texto);
 		String saux;
@@ -23,7 +26,8 @@ public class Bloco {
 		}
 	}
 	
-	private String converteParaBinario (String seq) {
+	// converte texto ASCII para uma string binária 
+	public static String converteParaBinario (String seq) {
 		String seqBin = new String(), v;
 		int valor;
 		int n = seq.length();
@@ -38,12 +42,12 @@ public class Bloco {
 		return seqBin;
 	}
 	
+	// converte array de bytes para Bloco
 	public static Bloco converteBufferEmBloco (byte[] chain) {
 		Bloco resp = new Bloco();
 		int size = chain.length; 
 		int j = 0;
 		String s;
-		String saux;
 		
 		for (int i = 0; i < size-3; i += 4) {			
 			s = calcula4BytesDecimais((short)chain[i], (short)chain[i+1],
@@ -58,6 +62,7 @@ public class Bloco {
 		return resp;
 	}
 	
+	// converte Bloco para array de bytes
 	public static byte[] converteBlocoEmBuffer (Bloco arg) {
 		byte[] buffer = new byte[16];
 		String saux;
@@ -76,40 +81,18 @@ public class Bloco {
 		return buffer;
 	}
 	
-	// completa o final do vetor bloco[] com (Long) 0xFF
-	public static Bloco completaBloco (byte[] legivel, int nbytes) {
-		int q = nbytes/4;
-		int r = nbytes%4;
-		String s;
-		int j = 0;
-		Bloco novo = new Bloco(); 
+	// completa o byte[] legivel com 0xFF e retorna um objeto Bloco 
+	public static Bloco completaBloco (byte[] legivel, int nbytes_lidos, long size_bytes) {
+		byte[] leg2 = new byte[16];
 		
-		for (int i = 0; i < 13; i += 4) {
-			if (i < nbytes) {
-				if (i < 4 * q) {
-					s = Bloco.calcula4BytesDecimais((short)legivel[i], (short)legivel[i+1], 
-							(short)legivel[i+2], (short)legivel[i+3]);
-				}
-				else {
-					short sbc3 = 255;
-					short sbc2 = 255;
-					
-					if (r >= 2)
-						sbc3 = (short)legivel[nbytes-r+1]; 
-						
-					if (r == 3)
-						sbc2 = (short)legivel[nbytes-r+2];
-					
-					s = Bloco.calcula4BytesDecimais((short)legivel[nbytes-r], sbc3, sbc2, (short)255);
-				}
-			}
-			
-			else {
-				s = Bloco.calcula4BytesDecimais((short)255, (short)255, (short)255, (short)255);
-			}
-			
-			novo.bloco[j++] = Long.valueOf(s, 2); 
-		}
+		for (int i = 0; i < nbytes_lidos; i++)
+			leg2[i] = legivel[i];
+		
+		for (int i = nbytes_lidos; i < 16; i++)
+			leg2[i] = (byte)255;
+		
+		Bloco novo = converteBufferEmBloco(leg2);
+		novo.bloco[3] = Long.valueOf(size_bytes); 
 		
 		return novo;
 	}
@@ -126,6 +109,39 @@ public class Bloco {
 			System.out.print(sq.completaComZero(Long.toBinaryString(bloco[i]), 32)+ " ");
 		}
 		System.out.println();
+	}
+
+	// Para entropia: 0 <= pos <= 127
+	public Bloco alteraIesimoBit (int pos) {
+		Bloco sai = new Bloco(this.bloco);
+		String subBloco;
+		int i = pos/32;
+		int r = pos%32;
+				
+		Long v = sai.bloco[i];
+		subBloco = sq.completaComZero(Long.toBinaryString(v), 32);
+		
+		//System.out.println(Long.toHexString(v));
+		//System.out.println(subBloco);
+		
+		char pos_char = subBloco.charAt(r);  
+		
+		if (pos_char == '0')
+			pos_char = '1';
+		else
+			pos_char = '0';
+		
+		char[] dados = subBloco.toCharArray();
+		
+		dados[r] = pos_char;
+		subBloco = new String(String.copyValueOf(dados));
+		
+		sai.bloco[i] = Long.valueOf(subBloco, 2);
+		
+		//System.out.println("==> "+Long.toHexString(sai.bloco[i]));
+		//System.out.println("==> "+subBloco+"\n");
+	
+		return sai;
 	}
 	
 	public static String calcula4BytesDecimais (short b4, short b3, short b2, short b1) {
@@ -157,4 +173,5 @@ public class Bloco {
 			this.bloco[i] = Long.valueOf(novo.bloco[i].longValue());
 		}
 	}
+	
 }

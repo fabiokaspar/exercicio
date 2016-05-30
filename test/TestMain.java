@@ -17,7 +17,7 @@ public class TestMain {
 
 	@Test
 	public void testDefineSenha16Bytes() {
-		Main.defineSenha16Bytes("senhamaC0336");
+		Main.defineSenha16Bytes("abC12ACC");
 	}
 
 }
